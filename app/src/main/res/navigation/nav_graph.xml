@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.mastermind.intellidrain.ui.home.HomeFragment"
+        android:label="Home">
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.mastermind.intellidrain.ui.map.MapFragment"
+        android:label="Map">
+        <action
+            android:id="@+id/action_mapFragment_to_drainDetailsFragment"
+            app:destination="@id/drainDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.mastermind.intellidrain.ui.alerts.AlertsFragment"
+        android:label="Alerts">
+        <action
+            android:id="@+id/action_alertsFragment_to_drainDetailsFragment"
+            app:destination="@id/drainDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.mastermind.intellidrain.ui.history.HistoryFragment"
+        android:label="History">
+        <argument
+            android:name="drainId"
+            app:argType="integer"
+            android:defaultValue="1" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/drainDetailsFragment"
+        android:name="com.mastermind.intellidrain.ui.drain_details.DrainDetailsFragment"
+        android:label="Drain Details">
+        <argument
+            android:name="drainId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_drainDetailsFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.mastermind.intellidrain.ui.settings.SettingsFragment"
+        android:label="Profile" />
+
+
+</navigation>
