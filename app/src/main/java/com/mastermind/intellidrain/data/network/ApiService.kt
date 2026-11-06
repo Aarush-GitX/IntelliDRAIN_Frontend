@@ -20,6 +20,8 @@ interface ApiService {
     @GET("drains/{id}/")
     suspend fun getDrainDetail(@Path("id") id: Int): DrainDetail
 
-    @GET("drains/{id}/history/")
-    suspend fun getDrainHistory(@Path("id") id: Int): List<InspectionRecord>
+    @GET("drains/{id}/history/?mode=list")
+    suspend fun getDrainHistory(
+        @Path("id") id: Int
+    ): List<InspectionRecord>
 }

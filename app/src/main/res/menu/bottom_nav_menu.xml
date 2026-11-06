@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/homeFragment" android:title="Home" android:icon="@android:drawable/ic_menu_myplaces" />
-    <item android:id="@+id/mapFragment" android:title="Map" android:icon="@android:drawable/ic_menu_mapmode" />
-    <item android:id="@+id/alertsFragment" android:title="Alerts" android:icon="@android:drawable/ic_dialog_alert" />
-    <item android:id="@+id/historyFragment" android:title="History" android:icon="@android:drawable/ic_menu_recent_history" />
+
+    <item
+        android:id="@+id/homeFragment"
+        android:title="Home"
+        android:icon="@android:drawable/ic_menu_myplaces" />
+
+    <item
+        android:id="@+id/alertsFragment"
+        android:title="Alerts"
+        android:icon="@android:drawable/ic_dialog_alert" />
+
+    <item
+        android:id="@+id/historyFragment"
+        android:title="History"
+        android:icon="@android:drawable/ic_menu_recent_history" />
+
 </menu>

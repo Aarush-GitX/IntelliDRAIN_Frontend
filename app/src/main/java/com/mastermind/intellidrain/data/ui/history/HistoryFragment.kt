@@ -1,44 +1,91 @@
+
 package com.mastermind.intellidrain.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.mastermind.intellidrain.databinding.FragmentHistoryBinding
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.mastermind.intellidrain.data.repository.DrainRepository
+import com.mastermind.intellidrain.databinding.FragmentHistoryBinding
+import kotlinx.coroutines.launch
 
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: HistoryViewModel by viewModels()
-    private val args: HistoryFragmentArgs by navArgs()
+
+    private val repository = DrainRepository()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        _binding = FragmentHistoryBinding.inflate(
+            inflater, container, false
+        )
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(requireContext())
 
-        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+        loadDrains()
+    }
+
+    private fun loadDrains() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val drains = repository.getAllDrains()
+
+                if (_binding == null) return@launch
+
+                val drainItems = drains.map { drain ->
+                    DrainItem(
+                        id = drain.id,
+                        name = "Drain %02d".format(drain.id),
+                        location = drain.area_name
+                    )
+                }
+
+                binding.recyclerView.adapter =
+                    DrainSelectionAdapter(drainItems) { drain ->
+                        val action =
+                            HistoryFragmentDirections
+                                .actionHistoryFragmentToDrainHistoryFragment(
+                                    drainId = drain.id,
+                                    drainName = drain.name
+                                )
+
+                        findNavController().navigate(action)
+                    }
+
+                if (drainItems.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "No drains found.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            } catch (e: Exception) {
+                if (_binding == null) return@launch
+
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to load drains. Please try again.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-
-        viewModel.history.observe(viewLifecycleOwner) { records ->
-            binding.recyclerView.adapter = HistoryAdapter(records)
-        }
-
-        viewModel.loadHistory(args.drainId)
     }
 
     override fun onDestroyView() {
@@ -46,3 +93,9 @@ class HistoryFragment : Fragment() {
         _binding = null
     }
 }
+
+data class DrainItem(
+    val id: Int,
+    val name: String,
+    val location: String
+)

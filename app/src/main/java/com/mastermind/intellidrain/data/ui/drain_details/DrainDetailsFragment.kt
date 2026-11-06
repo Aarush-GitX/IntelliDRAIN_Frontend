@@ -51,11 +51,19 @@ class DrainDetailsFragment : Fragment() {
             )
             binding.tvBlockage.text = "Blockage: ${(drain.blockage_ratio * 100).toInt()}%"
             binding.tvRainfall.text = "Rainfall (last hour): ${drain.rainfall_last_hour_mm} mm"
-            binding.tvHumidity.text = "Humidity: ${drain.humidity_pct}%"
             binding.tvTemperature.text = "Temperature: ${drain.temperature_c}°C"
-            binding.tvLastInspection.text = "Last Inspection: ${drain.last_inspection_date}"
-            binding.tvLastCleaning.text = "Last Cleaning: ${drain.last_cleaning_date ?: "N/A"}"
             binding.tvRecommendation.text = drain.dispatch_action
+                .takeIf { it.isNotBlank() }
+                ?: when (drain.risk_level.trim().uppercase()) {
+                    "CRITICAL" ->
+                        "Urgent action required: Inspect the drain and clear the blockage immediately. Check for overflow risks."
+
+                    "ELEVATED" ->
+                        "Schedule a drain inspection soon. Remove partial blockages and monitor water flow."
+
+                    else ->
+                        "Drain condition appears normal. Continue routine inspections and monitor for changes."
+                }
 
             binding.btnOpenNavigation.setOnClickListener {
                 openGoogleMapsNavigation(drain.latitude, drain.longitude)
@@ -70,7 +78,7 @@ class DrainDetailsFragment : Fragment() {
         viewModel.loadDrain(args.drainId)
         binding.btnViewHistory.setOnClickListener {
             val action = DrainDetailsFragmentDirections
-                .actionDrainDetailsFragmentToHistoryFragment(args.drainId)
+                .actionDrainDetailsFragmentToHistoryFragment()
             findNavController().navigate(action)
         }
     }

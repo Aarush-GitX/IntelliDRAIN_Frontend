@@ -31,11 +31,12 @@ class AlertsViewModel : ViewModel() {
                         title = if (drain.risk_level == "CRITICAL") "Critical Drain Alert" else "Overflow Risk Warning",
                         priority = drain.risk_level,
                         location = drain.area_name,
-                        time = drain.last_inspection_date,
+                        time = "Recently",
                         recommendedAction = if (drain.risk_level == "CRITICAL")
                             "Immediate cleaning required" else "Schedule inspection soon"
                     )
                 }
+
                 .sortedByDescending { it.priority == "CRITICAL" } // criticals show first
 
             _isLoading.value = false
